@@ -84,6 +84,30 @@ namespace PasteBin_API
                     }
                 }
             }
+
+            public void DeleteUserPost(string PasteKey, User currentUser)
+            {
+                using (var client = new WebClient())
+                {
+                    var data = new NameValueCollection();
+                    data.Add("api_option", "delete");
+                    data.Add("api_paste_key", PasteKey);
+                    data.Add("api_dev_key", _core.APIKEY);
+                    data.Add("api_user_key", getUserKey());
+                    try
+                    {
+                        client.UploadValuesAsync(new Uri("https://pastebin.com/api/api_post.php"), data);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+
+                    client.UploadValuesCompleted += (sender, args) => {
+                        Console.WriteLine(Encoding.ASCII.GetString(args.Result));
+                    };
+                }
+            }
         }
 
         public PasteBinCore(string APIKey)

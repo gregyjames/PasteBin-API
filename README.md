@@ -28,3 +28,9 @@ var postes = user.getUserPosts(10);
 Console.WriteLine(postes.Paste[0].Paste_title);
 Console.WriteLine(postes.Paste[1].Paste_title);
 ```
+
+### Delete Post
+```csharp
+//Input key of post you wish to delete
+user.DeleteUserPost("PASTEKEY", user);
+```

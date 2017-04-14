@@ -26,7 +26,13 @@ namespace PasteBin_API
                 _username = username;
                 _password = password;
                 _core = core;
-                _userKey = getUserKey();
+                try {
+                    _userKey = getUserKey();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
 
             public string getUserKey()
@@ -37,8 +43,15 @@ namespace PasteBin_API
                     data.Add("api_dev_key", _core.APIKEY);
                     data.Add("api_user_name", _username);
                     data.Add("api_user_password", _password);
-                    var responce = client.UploadValues(new Uri("https://pastebin.com/api/api_login.php"), data);
-                    return Encoding.ASCII.GetString(responce);
+                    try {
+                        var responce = client.UploadValues(new Uri("https://pastebin.com/api/api_login.php"), data);
+                        return Encoding.ASCII.GetString(responce);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        return null;
+                    }
                 }
             }
 
@@ -51,17 +64,24 @@ namespace PasteBin_API
                     data.Add("api_user_key", getUserKey());
                     data.Add("api_option", "list");
                     data.Add("api_results_limit", maxResults.ToString());
-                    var responce = client.UploadValues(new Uri("https://pastebin.com/api/api_post.php"), data);
-                   
-                    var s = "<Pastes>\n" + Encoding.ASCII.GetString(responce) + "</Pastes>";
-                    File.WriteAllText("Pastes.xml", s);
-                    TextReader reader = new StreamReader(@"Pastes.xml");
+                    try {
+                        var responce = client.UploadValues(new Uri("https://pastebin.com/api/api_post.php"), data);
 
-                    XmlSerializer deserializer = new XmlSerializer(typeof(Pastes));
-                    object obj = deserializer.Deserialize(reader);
-                    Pastes XmlData = (Pastes)obj;
+                        var s = "<Pastes>\n" + Encoding.ASCII.GetString(responce) + "</Pastes>";
+                        File.WriteAllText("Pastes.xml", s);
+                        TextReader reader = new StreamReader(@"Pastes.xml");
 
-                    return XmlData;
+                        XmlSerializer deserializer = new XmlSerializer(typeof(Pastes));
+                        object obj = deserializer.Deserialize(reader);
+                        Pastes XmlData = (Pastes)obj;
+
+                        return XmlData;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        return null;
+                    }
                 }
             }
         }
@@ -80,8 +100,13 @@ namespace PasteBin_API
                 data.Add("api_paste_name", PostName);
                 data.Add("api_dev_key", APIKEY);
                 data.Add("api_paste_code", PostText);
-                client.UploadValuesAsync(new Uri("https://pastebin.com/api/api_post.php"), data);
-                
+                try {
+                    client.UploadValuesAsync(new Uri("https://pastebin.com/api/api_post.php"), data);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
                 client.UploadValuesCompleted += (sender, args) => {
                     Console.WriteLine(Encoding.ASCII.GetString(args.Result));
                 };
@@ -98,7 +123,13 @@ namespace PasteBin_API
                 data.Add("api_dev_key", APIKEY);
                 data.Add("api_paste_code", PostText);
                 data.Add("api_user_key", currentUser._userKey);
-                client.UploadValuesAsync(new Uri("https://pastebin.com/api/api_post.php"), data);
+                try {
+                    client.UploadValuesAsync(new Uri("https://pastebin.com/api/api_post.php"), data);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
 
                 client.UploadValuesCompleted += (sender, args) => {
                     Console.WriteLine(Encoding.ASCII.GetString(args.Result));

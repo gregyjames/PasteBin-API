@@ -65,10 +65,13 @@ namespace PasteBin_API
                     data.Add("api_option", "list");
                     data.Add("api_results_limit", maxResults.ToString());
                     try {
-                        var responce = client.UploadValues(new Uri("https://pastebin.com/api/api_post.php"), data);
+                        Parallel.Invoke(() => {
+                            var responce = client.UploadValues(new Uri("https://pastebin.com/api/api_post.php"), data);
 
-                        var s = "<Pastes>\n" + Encoding.ASCII.GetString(responce) + "</Pastes>";
-                        File.WriteAllText("Pastes.xml", s);
+                            var s = "<Pastes>\n" + Encoding.ASCII.GetString(responce) + "</Pastes>";
+                            File.WriteAllText("Pastes.xml", s);
+                        });
+
                         TextReader reader = new StreamReader(@"Pastes.xml");
 
                         XmlSerializer deserializer = new XmlSerializer(typeof(Pastes));
